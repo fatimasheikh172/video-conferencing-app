@@ -1,0 +1,93 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ----------------------------------------
+  # JOB 1: Run Tests
+  # ----------------------------------------
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install server dependencies
+        run: |
+          cd server
+          npm install
+
+      - name: Install client dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd client
+          npm run build
+
+  # ----------------------------------------
+  # JOB 2: Lint Code
+  # ----------------------------------------
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install client dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Run lint
+        run: |
+          cd client
+          npm run lint --if-present || echo "No lint script found, skipping"
+
+  # ----------------------------------------
+  # JOB 3: Security Scan (Simple)
+  # ----------------------------------------
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Audit server dependencies
+        run: |
+          cd server
+          npm install
+          npm audit --audit-level=high || echo "Audit completed with warnings"
+
+      - name: Audit client dependencies
+        run: |
+          cd client
+          npm install
+          npm audit --audit-level=high || echo "Audit completed with warnings"

@@ -1,0 +1,98 @@
+CRITICAL DEBUGGING STEPS - Follow Exactly:
+
+===========================================
+STEP 1: Test Backend Directly in Browser
+===========================================
+1. Open Chrome
+2. Go to: http://127.0.0.1:5001/api/health
+3. You should see JSON response
+
+If this FAILS → Backend networking issue
+If this WORKS → Continue to Step 2
+
+===========================================
+STEP 2: Chrome Network Reset
+===========================================
+1. Open: chrome://net-internals/#sockets
+2. Click "Flush socket pools"
+3. Click "Close idle sockets"
+
+4. Open: chrome://net-internals/#dns
+5. Click "Clear host cache"
+
+6. Restart Chrome completely
+
+===========================================
+STEP 3: Disable ALL Chrome Extensions
+===========================================
+1. Open: chrome://extensions/
+2. Disable ALL extensions (especially ad blockers, VPNs, security extensions)
+3. Restart Chrome
+4. Test registration again
+
+===========================================
+STEP 4: Check Proxy Settings
+===========================================
+1. Open: chrome://settings/
+2. Search: "proxy"
+3. Click "Open your computer's proxy settings"
+4. Make sure "Use a proxy server" is UNCHECKED
+5. Click OK
+
+===========================================
+STEP 5: Try Incognito Mode
+===========================================
+1. Press: Ctrl+Shift+N (Incognito window)
+2. Go to: http://localhost:3000
+3. Try registration
+
+If it WORKS in incognito → Extension or cache issue
+If it FAILS in incognito → System-level issue
+
+===========================================
+STEP 6: Check Windows Firewall
+===========================================
+1. Press Windows key
+2. Type: "Windows Defender Firewall"
+3. Click "Allow an app through firewall"
+4. Find "Node.js JavaScript Runtime"
+5. Make sure BOTH Private and Public are CHECKED
+6. If not found, click "Allow another app" and add Node.js
+
+===========================================
+STEP 7: Disable Antivirus Temporarily
+===========================================
+1. Temporarily disable your antivirus
+2. Test registration
+3. Re-enable antivirus
+
+===========================================
+STEP 8: Try Different Browser
+===========================================
+1. Open Firefox or Edge
+2. Go to: http://localhost:3000
+3. Try registration
+
+If it WORKS in another browser → Chrome-specific issue
+If it FAILS in all browsers → System firewall/antivirus issue
+
+===========================================
+STEP 9: Check Network Adapter
+===========================================
+1. Press Windows+R
+2. Type: ncpa.cpl
+3. Press Enter
+4. Right-click on your network adapter
+5. Click "Disable" then "Enable"
+6. Test again
+
+===========================================
+STEP 10: Nuclear Option - Reset Chrome
+===========================================
+1. chrome://settings/reset
+2. Click "Restore settings to their original defaults"
+3. Click "Reset settings"
+
+===========================================
+
+START FROM STEP 1 AND REPORT RESULTS!

@@ -117,8 +117,8 @@ app.get('/api/health', (req, res) => {
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
-    success: false,
-    message: 'Route not found'
+    success: 'OK',
+    message: 'Backend is running'
   });
 });
 
@@ -133,12 +133,12 @@ server.listen(PORT, () => {
 ║                                                       ║
 ║   🚀 VideoConnect Server Running                     ║
 ║                                                       ║
-║   Port:        ${PORT}                                    ║
-║   Environment: ${process.env.NODE_ENV}                        ║
-║   Database:    ${process.env.MONGODB_URI ? 'Connected' : 'Not Connected'}                    ║
+║   Port:        ${PORT}                                ║
+║   Environment: ${process.env.NODE_ENV}                ║
+║   Database:    ${process.env.MONGODB_URI ? 'Connected' : 'Not Connected'}                   ║
 ║                                                       ║
-║   API:         http://localhost:${PORT}/api            ║
-║   Health:      http://localhost:${PORT}/api/health     ║
+║   API:         http://localhost:${PORT}/api           ║
+║   Health:      http://localhost:${PORT}/api/health    ║
 ║                                                       ║
 ╚═══════════════════════════════════════════════════════╝
   `);
@@ -168,3 +168,5 @@ process.on('uncaughtException', (err) => {
 });
 
 module.exports = server;
+
+

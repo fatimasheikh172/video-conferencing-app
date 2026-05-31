@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../../context/SocketContext';
 import useAuthStore from '../../store/authStore';
@@ -444,3 +445,4 @@ const ChatPanel = ({ roomId, isOpen, onClose }) => {
 };
 
 export default ChatPanel;
+

@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   # ----------------------------------------
   # JOB 1: Run Tests
@@ -21,10 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 24
+      - name: Setup Node.js 20 (for React compatibility)
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
 
       - name: Install server dependencies
         working-directory: server
@@ -37,6 +34,9 @@ jobs:
       - name: Build frontend
         working-directory: client
         run: npm run build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: false
 
   # ----------------------------------------
   # JOB 2: Lint Code
@@ -49,10 +49,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 24
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
 
       - name: Install client dependencies
         working-directory: client
@@ -73,10 +73,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 24
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
 
       - name: Audit server dependencies
         working-directory: server

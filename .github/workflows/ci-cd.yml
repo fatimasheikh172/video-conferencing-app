@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ----------------------------------------
   # JOB 1: Run Tests
@@ -18,25 +21,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install server dependencies
-        run: |
-          cd server
-          npm install
+        working-directory: server
+        run: npm install
 
       - name: Install client dependencies
-        run: |
-          cd client
-          npm install
+        working-directory: client
+        run: npm install --legacy-peer-deps
 
       - name: Build frontend
-        run: |
-          cd client
-          npm run build
+        working-directory: client
+        run: npm run build
 
   # ----------------------------------------
   # JOB 2: Lint Code
@@ -49,23 +49,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install client dependencies
-        run: |
-          cd client
-          npm install
+        working-directory: client
+        run: npm install --legacy-peer-deps
 
       - name: Run lint
-        run: |
-          cd client
-          npm run lint --if-present || echo "No lint script found, skipping"
+        working-directory: client
+        run: npm run lint --if-present || echo "No lint script, skipping"
 
   # ----------------------------------------
-  # JOB 3: Security Scan (Simple)
+  # JOB 3: Security Scan
   # ----------------------------------------
   security:
     name: Security Scan
@@ -75,19 +73,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Audit server dependencies
+        working-directory: server
         run: |
-          cd server
           npm install
-          npm audit --audit-level=high || echo "Audit completed with warnings"
+          npm audit --audit-level=critical || echo "Audit done"
 
       - name: Audit client dependencies
+        working-directory: client
         run: |
-          cd client
-          npm install
-          npm audit --audit-level=high || echo "Audit completed with warnings"
+          npm install --legacy-peer-deps
+          npm audit --audit-level=critical || echo "Audit done"

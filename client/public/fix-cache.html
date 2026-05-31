@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Cache Clear</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .step {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Complete Cache & Service Worker Cleanup</h1>
+
+    <div class="step">
+        <h2>Step 1: Unregister Service Workers</h2>
+        <button onclick="unregisterSW()">Unregister All Service Workers</button>
+        <p id="sw-status">Click button to start...</p>
+    </div>
+
+    <div class="step">
+        <h2>Step 2: Clear All Storage</h2>
+        <button onclick="clearStorage()">Clear All Storage</button>
+        <p id="storage-status">Click button to start...</p>
+    </div>
+
+    <div class="step">
+        <h2>Step 3: Test Backend Connection</h2>
+        <button onclick="testBackend()">Test Backend</button>
+        <p id="backend-status">Click button to test...</p>
+    </div>
+
+    <div class="step">
+        <h2>Step 4: Final Instructions</h2>
+        <ol>
+            <li>Close this tab</li>
+            <li>Press <strong>Ctrl+Shift+Delete</strong></li>
+            <li>Select "Cached images and files"</li>
+            <li>Time range: "All time"</li>
+            <li>Click "Clear data"</li>
+            <li>Close browser completely</li>
+            <li>Reopen and go to <a href="http://localhost:3000">http://localhost:3000</a></li>
+        </ol>
+    </div>
+
+    <script>
+        async function unregisterSW() {
+            const status = document.getElementById('sw-status');
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    if (registrations.length === 0) {
+                        status.innerHTML = '<span class="success">✓ No service workers found</span>';
+                        return;
+                    }
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                    status.innerHTML = '<span class="success">✓ All service workers unregistered (' + registrations.length + ')</span>';
+                } else {
+                    status.innerHTML = '<span class="error">Service Worker not supported</span>';
+                }
+            } catch (error) {
+                status.innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        function clearStorage() {
+            const status = document.getElementById('storage-status');
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Clear IndexedDB
+                if (window.indexedDB) {
+                    indexedDB.databases().then(dbs => {
+                        dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+                    });
+                }
+
+                status.innerHTML = '<span class="success">✓ All storage cleared (localStorage, sessionStorage, IndexedDB)</span>';
+            } catch (error) {
+                status.innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+            }
+        }
+
+        async function testBackend() {
+            const status = document.getElementById('backend-status');
+            status.innerHTML = 'Testing...';
+
+            try {
+                const response = await fetch('http://localhost:5001/api/health');
+                const data = await response.json();
+
+                if (data.status === 'healthy') {
+                    status.innerHTML = '<span class="success">✓ Backend is working! Status: ' + data.status + '</span>';
+                } else {
+                    status.innerHTML = '<span class="error">Backend responded but status is: ' + data.status + '</span>';
+                }
+            } catch (error) {
+                status.innerHTML = '<span class="error">✗ Cannot connect to backend: ' + error.message + '</span><br>' +
+                    '<strong>Make sure backend server is running on port 5001!</strong>';
+            }
+        }
+    </script>
+</body>
+</html>

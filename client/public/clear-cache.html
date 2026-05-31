@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Service Worker</title>
+</head>
+<body>
+    <h1>Clearing Service Worker...</h1>
+    <p id="status">Please wait...</p>
+
+    <script>
+        // Unregister all service workers
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+                document.getElementById('status').innerHTML =
+                    'Service Worker cleared! <br><br>' +
+                    '<strong>Now do the following:</strong><br>' +
+                    '1. Press Ctrl+Shift+Delete<br>' +
+                    '2. Select "Cached images and files"<br>' +
+                    '3. Click "Clear data"<br>' +
+                    '4. Close this tab<br>' +
+                    '5. Restart your dev server';
+            });
+        }
+
+        // Clear localStorage
+        localStorage.clear();
+        sessionStorage.clear();
+    </script>
+</body>
+</html>
